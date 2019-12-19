@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "216516487417",
+    "firebase_url": "https://kotlinfirebaserealtime.firebaseio.com",
+    "project_id": "kotlinfirebaserealtime",
+    "storage_bucket": "kotlinfirebaserealtime.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:216516487417:android:38ffd25fc74bc60315da28",
+        "android_client_info": {
+          "package_name": "com.mtehan.kotlinfirebaserealtime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "216516487417-u1n7crene3bt2fjid6hj7ptno3hbjvt0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mtehan.kotlinfirebaserealtime",
+            "certificate_hash": "6359b2002d345e8a7dbf8bafde227e8babc288de"
+          }
+        },
+        {
+          "client_id": "216516487417-bn8tqelsrl6hbitheo067595bihl8v7d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxjy_v5kj1HXcDtQTi1i7CXfJ9qOe__2E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "216516487417-bn8tqelsrl6hbitheo067595bihl8v7d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
