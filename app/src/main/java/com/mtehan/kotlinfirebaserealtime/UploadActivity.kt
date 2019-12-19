@@ -11,17 +11,34 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_upload.*
+import java.sql.Timestamp
+import java.util.*
 import java.util.jar.Manifest
+import android.app.ProgressDialog
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 class UploadActivity : AppCompatActivity() {
     var selectedPicture: Uri? = null
+    private lateinit var fireDb: FirebaseFirestore
+    private lateinit var mAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_upload)
+        mAuth = FirebaseAuth.getInstance()
+        fireDb = FirebaseFirestore.getInstance()
     }
 
     fun imageViewClicked(view: View) {
@@ -67,7 +84,8 @@ class UploadActivity : AppCompatActivity() {
                         val bitmap = ImageDecoder.decodeBitmap(source)
                         imageView.setImageBitmap(bitmap)
                     } else {
-                        val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, selectedPicture)
+                        val bitmap =
+                            MediaStore.Images.Media.getBitmap(this.contentResolver, selectedPicture)
                         imageView.setImageBitmap(bitmap)
                     }
 
@@ -81,6 +99,46 @@ class UploadActivity : AppCompatActivity() {
     }
 
     fun uploadClicked(view: View) {
+        //UUID image id
+        val uuid = UUID.randomUUID()
+        val imageName = "${uuid}.jpg"
+        val storage = FirebaseStorage.getInstance()
+        val imageReference = storage.reference.child("images").child(imageName)
+        if (selectedPicture != null) {
+            imageReference.putFile(selectedPicture!!).addOnSuccessListener { taskSnapshot ->
+                //Database firestore
+                val uploadedPictureReference =
+                    FirebaseStorage.getInstance().reference.child("images").child(imageName)
+                uploadedPictureReference.downloadUrl.addOnSuccessListener { uri ->
+                    val downloadUrl = uri.toString()
+                    val postMap = hashMapOf<String, Any>()
+
+                    postMap.put("downloadUrl", downloadUrl)
+                    postMap.put("userEmail", mAuth.currentUser!!.email.toString())
+                    postMap.put("comment", editText.text.toString())
+                    postMap.put("date", com.google.firebase.Timestamp.now())
+
+                    fireDb.collection("Posts").add(postMap).addOnCompleteListener { task ->
+                        if (task.isSuccessful && task.isSuccessful) {
+                            Toast.makeText(applicationContext, "Yükleme Başarılı", Toast.LENGTH_LONG).show()
+                            finish()
+                        }
+                    }.addOnFailureListener { exception ->
+                        Toast.makeText(
+                            applicationContext,
+                            "${exception.printStackTrace()}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }.addOnProgressListener { taskSnapshot ->
+                var progress: Double = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount()
+                val progressDialog = ProgressDialog(this)
+                progressDialog.setMessage(progress.toInt().toString()+" Uploaded...");
+                progressDialog.show()
+            }
+        }
+
 
     }
 }
