@@ -134,7 +134,7 @@ class UploadActivity : AppCompatActivity() {
             }.addOnProgressListener { taskSnapshot ->
                 var progress: Double = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount()
                 val progressDialog = ProgressDialog(this)
-                progressDialog.setMessage(progress.toInt().toString()+" Uploaded...");
+                progressDialog.setMessage("%"+progress.toInt().toString()+" Uploaded...");
                 progressDialog.show()
             }
         }
